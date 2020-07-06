@@ -19,7 +19,7 @@
 " ============  * Environment *  ==============
 " ==========================================
 " China Speed, Only work in china.
-let g:china_speed = 0
+let g:china_speed = 1
 if g:china_speed
 	let $china=1
 endif
@@ -396,12 +396,13 @@ endfunction
 
 function PlugInstalledDo()
 	if exists(":CocUpdate")
+		execute ":bd"
 		call CocConf()
 		echo
-		execute ":bd"
 		execute ":redraw!"
 		echo 'Installing coc-extensions..'
-		execute ":CocUpdateSync"
+		execute ":CocStart"
+		"execute ":CocInstall coc-json coc-explorer coc-diagnostic"
 	endif
 endfunction
 
