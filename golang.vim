@@ -1,8 +1,25 @@
+" === Fonts ===
+" You Nedd: https://github.com/ryanoasis/nerd-fonts/releases/download/v2.1.0/FiraCode.zip
+" === Mapping keys and command ===
+" \q  Close Buffer
+" \ed File manager
+" \ef File manager (Floating window)
+" gd Goto Definition
+" gb GoBack
+" \ff Global Variables, Functions
+" :GV Nice Git logs viewer
+" === Fzf ===
+" \sf File Search
+" \sm File History
+" \sb Open Buffers
+" Search files by keywords
+" :Ag keywords
+
 " ==========================================
 " ============  * Environment *  ==============
 " ==========================================
 " China Speed, Only work in china.
-let g:china_speed = 1
+let g:china_speed = 0
 if g:china_speed
 	let $china=1
 endif
