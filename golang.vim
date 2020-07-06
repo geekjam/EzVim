@@ -402,7 +402,6 @@ function PlugInstalledDo()
 		execute ":redraw!"
 		echo 'Installing coc-extensions..'
 		execute ":CocStart"
-		"execute ":CocInstall coc-json coc-explorer coc-diagnostic"
 	endif
 endfunction
 
