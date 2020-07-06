@@ -1,2 +1,2 @@
 # EzVim
-Easy vim config
+Easy Vim & Neovim config
