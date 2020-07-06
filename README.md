@@ -1,0 +1,2 @@
+# EzVim
+Easy vim config
