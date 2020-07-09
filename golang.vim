@@ -14,6 +14,9 @@
 " \sb Open Buffers
 " Search files by keywords
 " :Rg keywords
+" === snippets ===
+" ctrl+l for trigger snippet expand
+" ctrl+j for jump to next placeholder
 
 " ==========================================
 " ============  * Environment *  ==============
@@ -137,9 +140,9 @@ colorscheme slate
 syntax enable
 syntax on
 " ctrl+] _" to ": _
-imap <C-]> <C-o>a:<space>
+"imap <C-]> <C-o>a:<space>
 " ctrl+[ _" to ", _
-imap <C-\> <C-o>a,<space>
+"imap <C-\> <C-o>a,<space>
 " \c to copy the visual selection to the system clipboard
 vnoremap <Leader>c "+y
 " \v to paste the content of the system clipboard
@@ -350,6 +353,11 @@ function CocConf()
 	let g:coc_user_config = {}
 	" coc-snippets
 	let g:coc_user_config['snippets.ultisnips.enable'] = v:false
+	" Use <C-l> for trigger snippet expand
+	imap <C-l> <C-e><Plug>(coc-snippets-expand)
+	" Use <C-j> for jump to next placeholder
+	imap <C-j> <C-o> <Plug>(coc-snippets-expand-jump)
+
 	" coc-explorer
 	let g:coc_user_config['explorer.icon.enableNerdfont'] = v:true
 	let g:coc_user_config['explorer.keyMappings'] = {"<cr>": ["expandable?", ["expanded?", "collapse", "expand"], "open"]}
