@@ -140,9 +140,9 @@ colorscheme slate
 syntax enable
 syntax on
 " ctrl+] _" to ": _
-"imap <C-]> <C-o>a:<space>
+imap <C-]> <C-o>a:<space>
 " ctrl+[ _" to ", _
-"imap <C-\> <C-o>a,<space>
+imap <C-\> <C-o>a,<space>
 " \c to copy the visual selection to the system clipboard
 vnoremap <Leader>c "+y
 " \v to paste the content of the system clipboard
@@ -361,7 +361,7 @@ function CocConf()
 	let g:coc_user_config['explorer.keyMappings'] = {"<cr>": ["expandable?", ["expanded?", "collapse", "expand"], "open"]}
 	" coc-diagnostic
 	let g:coc_user_config['diagnostic-languageserver.filetypes'] = { 'go': "golangci-lint" }
-	let g:coc_user_config['diagnostic-languageserver.formatters'] = { 'goreturns': { "command": "goreturns" } }
+	let g:coc_user_config['diagnostic-languageserver.formatters'] = { 'goreturns': { "command": "goreturns", "rootPatterns": ["go.mod", ".vim/", ".git/", ".hg/"] } }
 	let g:coc_user_config['diagnostic-languageserver.formatFiletypes'] = { 'go': "goreturns" }
 	let g:coc_user_config['coc.preferences.formatOnSaveFiletypes'] = [ 'go' ]
 	" coc languageserver golang
