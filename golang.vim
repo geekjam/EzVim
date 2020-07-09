@@ -6,14 +6,14 @@
 " \ef File manager (Floating window)
 " gd Goto Definition
 " gb GoBack
-" \ff Global Variables, Functions
+" \ff Global Variables, Functions, etc..
 " :GV Nice Git logs viewer
 " === Fzf ===
 " \sf File Search
 " \sm File History
 " \sb Open Buffers
 " Search files by keywords
-" :Ag keywords
+" :Rg keywords
 
 " ==========================================
 " ============  * Environment *  ==============
@@ -28,6 +28,7 @@ endif
 " https://github.com/neoclide/coc.nvim
 " https://github.com/weirongxu/coc-explorer
 " https://github.com/iamcco/coc-diagnostic
+" https://github.com/neoclide/coc-snippets
 let g:coc_kit = 1
 
 " ##### Detect System And Version
@@ -100,11 +101,6 @@ filetype on
 au BufNewFile,BufFilePre,BufRead *.md set filetype=markdown
 au BufNewFile,BufFilePre,BufRead *.MD set filetype=markdown
 
-" ##### Last Edit Line
-if has("autocmd")
-	au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
-endif
-
 filetype indent on           " Auto Indent
 filetype plugin on           " Auto Plugin
 filetype plugin indent on    " Auto Indent
@@ -128,20 +124,22 @@ set numberwidth=5
 set laststatus=2
 set shortmess=atI
 set cursorline " Highlight Cursor Line
-set laststatus=2
 set guioptions-=T " Hide Tool bar
 set showmatch " Highlight symbol
 set incsearch " Search Real-time
 set hlsearch  " Highlight Search
 set list
-set listchars=tab:>-,trail:-
+set listchars=tab:-->,trail:-
 set termguicolors
 "set t_Co=256
 let $NVIM_TUI_ENABLE_TRUE_COLOR=1
 colorscheme slate
 syntax enable
 syntax on
-
+" ctrl+] _" to ": _
+imap <C-]> <C-o>a:<space>
+" ctrl+[ _" to ", _
+imap <C-\> <C-o>a,<space>
 " \c to copy the visual selection to the system clipboard
 vnoremap <Leader>c "+y
 " \v to paste the content of the system clipboard
@@ -187,18 +185,22 @@ endif
 function PlugDef()
 	Plug 'mhinz/vim-startify'
 	Plug 'psliwka/vim-smoothie'
-	Plug 'w0ng/vim-hybrid'
-	"Plug 'lifepillar/vim-solarized8'
+	" colorscheme
+	Plug 'hzchirs/vim-material'
+	Plug 'tyrannicaltoucan/vim-deep-space'
+	" statusline/tabline plugin
 	Plug 'itchyny/lightline.vim'
+
 	Plug 'nathanaelkane/vim-indent-guides'
 	Plug 'ryanoasis/vim-devicons' " File icons
 
 	"Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
-	
+
 	Plug 'easymotion/vim-easymotion' " Fast move cursor
 	" Fuzzy finder
 	Plug 'geekjam/fzf', { 'do': { -> fzf#install() } }
 	Plug 'junegunn/fzf.vim'
+	Plug 'geekjam/rg', { 'do': { -> rg#install() }}
 
 	Plug 'sheerun/vim-polyglot' "Programming syntax highlight pack
 	Plug 'ap/vim-css-color' "css color display
@@ -207,7 +209,6 @@ function PlugDef()
 	Plug 'tpope/vim-fugitive' " Base Git support
 	Plug 'junegunn/gv.vim' " Nice git logs plugin
 	" File Git status
-	"Plug 'airblade/vim-gitgutter'
 	if has('nvim') || has('patch-8.0.902')
 		Plug 'mhinz/vim-signify'
 	else
@@ -218,46 +219,72 @@ function PlugDef()
 	Plug 'Raimondi/delimitMate'
 	Plug 'gregsexton/MatchTag'
 
+	" Last Edit Line
+	Plug 'farmergreg/vim-lastplace'
+
 	Plug 'tomtom/tcomment_vim'
 
+	Plug 'honza/vim-snippets'
 	if g:coc_kit
 		Plug 'neoclide/coc.nvim', {'branch': 'release'}
 	endif
 endfunction
 
+function ThemeConf(timer)
+	let hr = (str2nr(strftime('%H')))
+	if hr > 18 || hr < 7
+		colorscheme deep-space
+	else
+		let g:material_style='palenight'
+		colorscheme vim-material
+	endif
+endfunction
+
 function PlugConf()
+	" colorscheme config
 	try
-		colorscheme hybrid
+		call ThemeConf(0)
+		if exists('*timer_start')
+			call timer_start(10000, 'ThemeConf', {"repeat": -1})
+		endif
 	catch /^Vim\%((\a\+)\)\=:E185/
 		"other
 	endtry
 
+	" syntax highlight config
+	let g:go_highlight_functions = 1
+	let g:go_highlight_operators = 1
+	let g:go_highlight_function_calls = 1
+	let g:go_highlight_variable_assignments = 1
+	let g:go_highlight_variable_declarations = 1
+
 	" indent guides config
-	let g:indent_guides_guide_size=1
 	let g:indent_guides_enable_on_vim_startup = 1
+	let g:indent_guides_guide_size = 1
+	let g:indent_guides_exclude_filetypes = ['help', 'coc-explorer', 'startify', 'fzf']
 	map <F11> :w<cr>:IndentGuidesEnable<cr>
 
 	" lightline config
 	let g:lightline = {}
 	let g:lightline.colorscheme="wombat"
 	let g:lightline.active = {'left': [['mode', 'paste'], ['gitstatus', 'readonly', 'filename', 'modified']]}
-	"let g:lightline["component"] = { 'fugitive': '%{GitStatus()}' }
 	let g:lightline["component_function"] = { 'gitstatus': 'GitStatus'}
 	let g:lightline#bufferline#enable_devicons = 1
 	function GitStatus()
 		let status = FugitiveStatusline()
 		return status
 	endfunction
-	let g:lightline.enable = {'statusline': 1, 'tabline': 0}
 
-	" === fzf config ===
+	" fzf config
 	" disable preview window
 	let g:fzf_preview_window = ''
-	" fzf flowing window
-	let g:fzf_layout = { 'window': { 'width': 0.8, 'height': 0.8 } }
+	let g:fzf_layout = { 'window': { 'width': 0.5, 'height': 0.6 } }
 	noremap <leader>sf :Files<CR>
 	noremap <leader>sm :History<CR>
 	noremap <leader>sb :Buffers<CR>
+
+	"easymotion config
+	nmap s <Plug>(easymotion-overwin-f2)
 endfunction
 
 function PlugConfUIInit()
@@ -309,8 +336,8 @@ endfunction
 function CocConf()
 	" ===  * Coc.Nvim *  ===
 	call CheckGoInstall()
-	let g:coc_global_extensions	= ['coc-json', 'coc-explorer', 'coc-diagnostic']
-	
+	let g:coc_global_extensions	= ['coc-json', 'coc-explorer', 'coc-diagnostic', 'coc-snippets']
+
 	" coc explorer
 	let g:coc_explorer_global_presets={}
 	let g:coc_explorer_global_presets['floating']={'position': 'floating','open-action-strategy': 'sourceWindow'}
@@ -321,14 +348,17 @@ function CocConf()
 
 	" coc user config
 	let g:coc_user_config = {}
-	" coclist explorer
+	" coc-snippets
+	let g:coc_user_config['snippets.ultisnips.enable'] = v:false
+	" coc-explorer
 	let g:coc_user_config['explorer.icon.enableNerdfont'] = v:true
 	let g:coc_user_config['explorer.keyMappings'] = {"<cr>": ["expandable?", ["expanded?", "collapse", "expand"], "open"]}
-
+	" coc-diagnostic
 	let g:coc_user_config['diagnostic-languageserver.filetypes'] = { 'go': "golangci-lint" }
 	let g:coc_user_config['diagnostic-languageserver.formatters'] = { 'goreturns': { "command": "goreturns" } }
 	let g:coc_user_config['diagnostic-languageserver.formatFiletypes'] = { 'go': "goreturns" }
 	let g:coc_user_config['coc.preferences.formatOnSaveFiletypes'] = [ 'go' ]
+	let g:coc_user_config['suggest.preferCompleteThanJumpPlaceholder'] = v:true
 	" coc languageserver golang
 	let g:coc_user_config['languageserver'] = {'golang':{}}
 	let g:coc_user_config['languageserver']['golang']={}
@@ -347,10 +377,26 @@ function CocConf()
 
 	" Always show the signcolumn, otherwise it would shift the text each time
 	" diagnostics appear/become resolved.
-	set signcolumn=yes
+	if has("patch-8.1.1564")
+		" Recently vim can merge signcolumn and number column into one
+		set signcolumn=number
+	else
+		set signcolumn=yes
+	endif
 
-	" Use <c-space> to trigger completion.
-	inoremap <silent><expr> <c-space> coc#refresh()
+	" Use tab for trigger completion with characters ahead and navigate.
+	" NOTE: Use command ':verbose imap <tab>' to make sure tab is not mapped by
+	" other plugin before putting this into your config.
+	inoremap <silent><expr> <TAB>
+				\ pumvisible() ? "\<C-n>" :
+				\ <SID>check_back_space() ? "\<TAB>" :
+				\ coc#refresh()
+	inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+
+	function! s:check_back_space() abort
+		let col = col('.') - 1
+		return !col || getline('.')[col - 1]  =~# '\s'
+	endfunction
 
 	" Use <cr> to confirm completion, `<C-g>u` means break undo chain at current
 	" position. Coc only does snippet and additional edit on confirm.
@@ -360,13 +406,13 @@ function CocConf()
 	else
 		inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
 	endif
-	
+
 	" GoTo code navigation.
 	nmap <silent> gd <Plug>(coc-definition)
 	nmap <silent> gy <Plug>(coc-type-definition)
 	nmap <silent> gi <Plug>(coc-implementation)
 	nmap <silent> gr <Plug>(coc-references)
-	" Use D to show documentation in preview window.
+	" Use K to show documentation in preview window.
 	nnoremap <silent> D :call <SID>show_documentation()<CR>
 	function! s:show_documentation()
 		if (index(['vim','help'], &filetype) >= 0)
@@ -381,15 +427,12 @@ function CocConf()
 		autocmd!
 		" Setup formatexpr specified filetype(s).
 		autocmd FileType typescript,json setl formatexpr=CocAction('formatSelected')
-		" Update signature help on jump placeholder
 		autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
 	augroup end
 
 	" Mappings using CoCList:
 	" Show all diagnostics.
 	nnoremap <silent> <Leader>el  :<C-u>CocList diagnostics<cr>
-	" Manage extensions.
-	nnoremap <silent> <Leader>ce  :<C-u>CocList extensions<cr>
 	" Find symbol of current document.
 	nnoremap <silent> <Leader>ff  :<C-u>CocList outline<cr>
 endfunction
@@ -413,13 +456,13 @@ if g:OS#win
 endif
 
 " ##### Plugin Install Check Path
-let $VIMPLUG_CHECKPATH = $PLUGPATH.'vim-plug/README.md'
+let $VIMPLUG_CHECKPATH = $PLUGPATH.'vim-plug/plug.vim'
 if g:OS#win
-	let $VIMPLUG_CHECKPATH = $PLUGPATH.'vim-plug\README.md'
+	let $VIMPLUG_CHECKPATH = $PLUGPATH.'vim-plug\plug.vim'
 endif
 
 let vimplug_readme=expand($VIMPLUG_CHECKPATH)
-if filereadable(vimplug_readme)  
+if filereadable(vimplug_readme)
 	let g:PlugInit = 1
 else
 	let g:PlugInit = 0
@@ -432,8 +475,8 @@ function PlugInit()
 		source $VIMFILES/plugged/vim-plug/plug.vim
 	endif
 	if g:china_speed
-	"let g:plug_url_format = 'https://git::@github.com.cnpmjs.org/%s.git'
-	let g:plug_url_format = 'https://git::@hub.fastgit.org/%s.git'
+		"let g:plug_url_format = 'https://git::@github.com.cnpmjs.org/%s.git'
+		let g:plug_url_format = 'https://git::@hub.fastgit.org/%s.git'
 	endif
 	call plug#begin($PLUGPATH)
 	call PlugDef()
