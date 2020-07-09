@@ -336,7 +336,7 @@ endfunction
 function CocConf()
 	" ===  * Coc.Nvim *  ===
 	call CheckGoInstall()
-	let g:coc_global_extensions	= ['coc-json', 'coc-explorer', 'coc-diagnostic', 'coc-snippets']
+	let g:coc_global_extensions = ['coc-json', 'coc-explorer', 'coc-diagnostic', 'coc-snippets']
 
 	" coc explorer
 	let g:coc_explorer_global_presets={}
