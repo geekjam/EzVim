@@ -354,9 +354,7 @@ function CocConf()
 	" coc-snippets
 	let g:coc_user_config['snippets.ultisnips.enable'] = v:false
 	" Use <C-l> for trigger snippet expand
-	imap <C-l> <C-e><Plug>(coc-snippets-expand)
-	" Use <C-j> for jump to next placeholder
-	imap <C-j> <C-o> <Plug>(coc-snippets-expand-jump)
+	imap <C-l> <Plug>(coc-snippets-expand)
 
 	" coc-explorer
 	let g:coc_user_config['explorer.icon.enableNerdfont'] = v:true
@@ -366,7 +364,6 @@ function CocConf()
 	let g:coc_user_config['diagnostic-languageserver.formatters'] = { 'goreturns': { "command": "goreturns" } }
 	let g:coc_user_config['diagnostic-languageserver.formatFiletypes'] = { 'go': "goreturns" }
 	let g:coc_user_config['coc.preferences.formatOnSaveFiletypes'] = [ 'go' ]
-	let g:coc_user_config['suggest.preferCompleteThanJumpPlaceholder'] = v:true
 	" coc languageserver golang
 	let g:coc_user_config['languageserver'] = {'golang':{}}
 	let g:coc_user_config['languageserver']['golang']={}
