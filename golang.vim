@@ -147,6 +147,10 @@ imap <C-\> <C-o>a,<space>
 vnoremap <Leader>c "+y
 " \v to paste the content of the system clipboard
 nnoremap <Leader>v "+p
+nnoremap <Leader>te :tabnew<CR>
+nnoremap <Leader>tn :tabNext<CR>
+nnoremap <Leader>tq :tabclose<CR>
+tnoremap <C-q> <C-\><C-n>
 " \q close buffer
 nmap <Leader>q :bd<CR>
 " gb go back
@@ -234,12 +238,20 @@ function PlugDef()
 endfunction
 
 function ThemeConf(timer)
+	let theme = 'vim-material'
+	let nightTheme = 'deep-space'
+	let g:material_style='palenight'
 	let hr = (str2nr(strftime('%H')))
 	if hr > 18 || hr < 7
-		colorscheme deep-space
-	else
-		let g:material_style='palenight'
-		colorscheme vim-material
+		let theme = 'deep-space'
+	endif
+
+	if g:colors_name != theme
+		if theme == 'vim-material'
+			colorscheme vim-material
+		else
+			colorscheme deep-space
+		endif
 	endif
 endfunction
 
